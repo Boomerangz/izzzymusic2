@@ -1,6 +1,13 @@
 {% for track in objects_list%}
                    {%if track.link %}
-                      <li><a href="#" data-src={{track.link}}>{{track.str}}</a></li>
+                      <li>
+                          <a href="#" class="audiolink" data-src={{track.link}}>{{track.str}}</a>
+                          {% if not track.liked %}
+                              <a href="#" class="to-like" track_id="{{track.id}}">Like</a>
+                          {% else %}
+                              <a href="#" track_id="{{track.id}}" style="font-weight: bold">LIKED</a>
+                          {% endif %}
+                      </li>
                    {%else%}
                       {{track.str}} - В обработке <br>
                    {% endif %}

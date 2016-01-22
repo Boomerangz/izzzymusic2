@@ -9,7 +9,15 @@
             <ul>
                 {% for track in objects_list%}
                    {%if track.link %}
-                      <li class="{% if forloop.first %}playing {% endif %}audio"><a href="#" data-src={{track.link}}>{{track.str}}</a><a href="#" class="to-like">Like</a></li>
+                      <li class="{% if forloop.first %}playing {% endif %}">
+                          <a href="#" class="audiolink" data-src={{track.link}}>{{track.str}}</a>
+                          {% if not track.liked %}
+                              <a href="#" class="to-like" track_id="{{track.id}}">Like</a>
+                          {% else %}
+                              <a href="#" track_id="{{track.id}}" style="font-weight: bold">LIKED</a>
+                          {% endif %}
+
+                      </li>
                    {%else%}
                       {{track.str}} - В обработке <br>
                    {% endif %}
@@ -41,20 +49,35 @@
         first = $('ul a').attr('data-src');
         audio.load(first);
         function onClick(e) {
-              e.preventDefault();
-              $(this).addClass('playing').siblings().removeClass('playing');
-              audio.load($('a', this).attr('data-src'));
-              audio.play();
+                e.preventDefault();
+                $(this).parent().addClass('playing').siblings().removeClass('playing');
+                audio.load($(this).attr('data-src'));
+                audio.play();
             }
-        $('.music-list').on('click','li',onClick);
-        var page=0;
+        function onLike(e) {
+                e.preventDefault();
+                id=$(this).attr('track_id');
+                link = $(this);
+                $.ajax({
+                      url: "/music/like/"+id,
+                      success: function (response) {
+                          if (response['success']==true) {
+                              link.css("font-weight","bold");
+                              link.html("LIKED");
+                          }
+                      }
+                  });
+            }
+        $('.music-list').on('click','.audiolink', onClick);
+        $('.music-list').on('click','.to-like', onLike);
+        var page=1;
         $('#more-music').click(function(e) {
             $('#more-music').hide();
             $('#loading').show();
               e.preventDefault();
               $.ajax({
                   url: "/music/ajax/?page="+page,
-                  success: function (data, textStatus) { // вешаем свой обработчик на функцию success
+                  success: function (data) {
                       $('#more-music').show();
                       $('#loading').hide();
                       $('.music-list ul').append(data);
