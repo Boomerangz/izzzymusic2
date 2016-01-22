@@ -15,6 +15,7 @@
                    {% endif %}
                 {% endfor %}
             </ul>
+            <img id="loading" src="http://www.arabianbusiness.com/skins/ab.main/gfx/loading_spinner.gif" style="display: block; margin: 0 auto; width: 50px; height:50px; display:none;">
             <a id="more-music" style="padding-bottom: 70px;">MORE</a>
         </div>
     </div>
@@ -42,19 +43,24 @@
         function onClick(e) {
               e.preventDefault();
               $(this).addClass('playing').siblings().removeClass('playing');
-              audio.load($('a','.audio', this).attr('data-src'));
+              audio.load($('a', this).attr('data-src'));
               audio.play();
             }
         $('.music-list').on('click','li',onClick);
         var page=0;
         $('#more-music').click(function(e) {
+            $('#more-music').hide();
+            $('#loading').show();
               e.preventDefault();
               $.ajax({
                   url: "/music/ajax/?page="+page,
                   success: function (data, textStatus) { // вешаем свой обработчик на функцию success
-                      $('.music-list ul').append(data)
-                        page++;
-                  }});
+                      $('#more-music').show();
+                      $('#loading').hide();
+                      $('.music-list ul').append(data);
+                      page++;
+                  }
+              });
         });
     </script>
 {% endblock %}
