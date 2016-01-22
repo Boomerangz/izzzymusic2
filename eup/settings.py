@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'music',
 
+    'djcelery',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,6 +50,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+import djcelery
+djcelery.setup_loader()
 
 ROOT_URLCONF = 'eup.urls'
 
@@ -93,3 +98,13 @@ STATICFILES_DIRS = [
 ]
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR,  'templates'),)
+
+
+BOT_TOKEN = '176784464:AAERe2JaWKTgqi8W4UVKtTBQWjOeoGY4G6Y'
+URL = "https://api.telegram.org/bot%s/" % BOT_TOKEN
+MyURL = "https://izzzymusic.xyz/message/"
+import requests
+r = requests.get(URL + "setWebhook?url=%s" % MyURL)
+if r.status_code != 200:
+    print "Can't set hook: %s. Quit." % r.text
+    exit(1)

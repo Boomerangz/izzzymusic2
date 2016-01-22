@@ -76,7 +76,7 @@
             $('#loading').show();
               e.preventDefault();
               $.ajax({
-                  url: "/music/ajax/?page="+page,
+                  url: "/music/ajax/?{% if request.GET.liked %}liked&{% endif %}page="+page,
                   success: function (data) {
                       $('#more-music').show();
                       $('#loading').hide();
