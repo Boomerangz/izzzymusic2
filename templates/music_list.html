@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="/static/css/audio.css">
    {% endblock %}
     <div class="container">
+        <div class="search">
+            <form action="" method="GET">
+                <input type="text" name="search">
+                <input type="submit" value="SEARCH">
+            </form>
+        </div>
         <div class="music-list">
             <ul>
                 {% for track in objects_list%}
@@ -76,7 +82,7 @@
             $('#loading').show();
               e.preventDefault();
               $.ajax({
-                  url: "/music/ajax/?{% if request.GET.liked %}liked&{% endif %}page="+page,
+                  url: "/music/ajax/?{% if search %}search={{ search }}&{% endif %}{% if liked %}sliked=true&{% endif %}page="+page,
                   success: function (data) {
                       $('#more-music').show();
                       $('#loading').hide();

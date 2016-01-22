@@ -51,6 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+
 import djcelery
 djcelery.setup_loader()
 
