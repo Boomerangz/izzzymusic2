@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+   {% block style %}
+    <link rel="stylesheet" href="/static/css/audio.css">
+   {% endblock %}
+    <div class="container">
+        <div class="music-list">
+            <ul>
+                {% for track in objects_list%}
+                   {%if track.link %}
+                      <li class="{% if forloop.first %}playing {% endif %}audio"><a href="#" data-src={{track.link}}>{{track.str}}</a><a href="#" class="to-like">Like</a></li>
+                   {%else%}
+                      {{track.str}} - В обработке <br>
+                   {% endif %}
+                {% endfor %}
+            </ul>
+            <a id="more-music" style="padding-bottom: 70px;">MORE</a>
+        </div>
+    </div>
+    <div id="player" style="position: fixed; bottom: 0px; width: 100%; background: white">
+            <audio preload="auto"></audio>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script src="/static/audiojs/audio.min.js"></script>
+    <script>
+        var a = audiojs.createAll({
+          trackEnded: function() {
+            var next = $('.music-list ul li.playing').next();
+              console.log(next);
+            if (!next.length) next = $('.music-list ul li').first();
+            next.click();
+          }
+        });
+    </script>
+    <script>
+        var audio = a[0];
+        first = $('ul a').attr('data-src');
+        audio.load(first);
+        function onClick(e) {
+              e.preventDefault();
+              $(this).addClass('playing').siblings().removeClass('playing');
+              audio.load($('a','.audio', this).attr('data-src'));
+              audio.play();
+            }
+        $('.music-list').on('click','li',onClick);
+        var page=0;
+        $('#more-music').click(function(e) {
+              e.preventDefault();
+              $.ajax({
+                  url: "/music/ajax/?page="+page,
+                  success: function (data, textStatus) { // вешаем свой обработчик на функцию success
+                      $('.music-list ul').append(data)
+                        page++;
+                  }});
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% for track in objects_list%}
+                   {%if track.link %}
+                      <li><a href="#" data-src={{track.link}}>{{track.str}}</a></li>
+                   {%else%}
+                      {{track.str}} - В обработке <br>
+                   {% endif %}
+{% endfor %}
