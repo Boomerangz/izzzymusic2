@@ -2,10 +2,11 @@
                    {%if track.link %}
                       <li>
                           <a href="#" class="audiolink" data-src={{track.link}}>{{track.str}}</a>
+                          <img track_id="{{track.id}}" class="to-send action-icon" src="/static/images/telegram.png">
                           {% if not track.liked %}
-                              <a href="#" class="to-like" track_id="{{track.id}}">Like</a>
+                              <img track_id="{{track.id}}" class="to-like action-icon" src="/static/images/like.png">
                           {% else %}
-                              <a href="#" track_id="{{track.id}}" style="font-weight: bold">LIKED</a>
+                              <img track_id="{{track.id}}" class="to-like action-icon" src="/static/images/liked.png">
                           {% endif %}
                       </li>
                    {%else%}

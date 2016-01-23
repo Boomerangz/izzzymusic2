@@ -7,7 +7,7 @@
     <div class="container">
         <div class="search">
             <form action="" method="GET">
-                <input type="text" name="search">
+                <input type="text" name="search" value="{{ search }}">
                 <input type="submit" value="SEARCH">
             </form>
         </div>
@@ -17,12 +17,12 @@
                    {%if track.link %}
                       <li class="{% if forloop.first %}playing {% endif %}">
                           <a href="#" class="audiolink" data-src={{track.link}}>{{track.str}}</a>
+                          <img track_id="{{track.id}}" class="to-send action-icon" src="/static/images/telegram.png">
                           {% if not track.liked %}
-                              <a href="#" class="to-like" track_id="{{track.id}}">Like</a>
+                              <img track_id="{{track.id}}" class="to-like action-icon" src="/static/images/like.png">
                           {% else %}
-                              <a href="#" track_id="{{track.id}}" style="font-weight: bold">LIKED</a>
+                              <img track_id="{{track.id}}" class="to-like action-icon liked" src="/static/images/liked.png">
                           {% endif %}
-
                       </li>
                    {%else%}
                       {{track.str}} - В обработке <br>
@@ -44,7 +44,7 @@
         var a = audiojs.createAll({
           trackEnded: function() {
             var next = $('.music-list ul li.playing').next();
-              console.log(next);
+            console.log(next);
             if (!next.length) next = $('.music-list ul li').first();
             next.click();
           }
@@ -60,6 +60,24 @@
                 audio.load($(this).attr('data-src'));
                 audio.play();
             }
+        function onSend(e) {
+                e.preventDefault();
+                id=$(this).attr('track_id');
+                link = $(this);
+                $.ajax({
+                      url: "/music/send_telegram/"+id,
+                      success: function (response) {
+                          if (response['success']==true) {
+                              link.css("font-weight","bold");
+                              link.attr("src","/static/images/telegram_sent.png");
+                          } else {
+                              if (response["code"]) {
+                                alert("WRITE IT IN TELEGRAM BOT \n"+response["code"]);
+                              }
+                          }
+                      }
+                  });
+            }
         function onLike(e) {
                 e.preventDefault();
                 id=$(this).attr('track_id');
@@ -69,13 +87,20 @@
                       success: function (response) {
                           if (response['success']==true) {
                               link.css("font-weight","bold");
-                              link.html("LIKED");
+                              if (response['liked']){
+                                  link.attr("src","/static/images/liked.png");
+                                  link.addClass("liked")
+                              } else {
+                                  link.attr("src","/static/images/like.png");
+                                  link.removeClass("liked")
+                              }
                           }
                       }
                   });
             }
         $('.music-list').on('click','.audiolink', onClick);
         $('.music-list').on('click','.to-like', onLike);
+        $('.music-list').on('click','.to-send', onSend);
         var page=1;
         $('#more-music').click(function(e) {
             $('#more-music').hide();
