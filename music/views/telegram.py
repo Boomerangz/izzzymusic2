@@ -16,8 +16,10 @@ def temp_file_name():
 # {"update_id":202480832,
 # "message":{"message_id":8,"from":{"id":1398413,"first_name":"Igor","last_name":"Zygin"},"chat":{"id":1398413,"first_name":"Igor","last_name":"Zygin","type":"private"},"date":1450995712,"text":"asd"}}
 def set_id(chat_id, uu_code):
-    telegram_link = TelegramLink.objects.filter(unique_code=uu_code)
+    print uu_code
+    telegram_link = TelegramLink.objects.filter(unique_code=uu_code[0])
     if len(telegram_link)>0:
+	print telegram_link
         telegram_link=telegram_link[0]
         telegram_link.chat_id=chat_id
         telegram_link.save()
